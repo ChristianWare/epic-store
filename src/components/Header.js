@@ -1,8 +1,11 @@
 import Link from "next/link";
 import Logo from "./Logo";
 import { ShoppingCartIcon } from "@heroicons/react/24/solid";
+import { useShoppingCart } from "use-shopping-cart";
 
 const Header = () => {
+  const { formattedTotalPrice, cartCount } = useShoppingCart();
+
   return (
     <header className='sticky top-0 bg-white z-10 shadow'>
       <div className='container mx-auto p-6 flex justify-between'>
@@ -14,8 +17,8 @@ const Header = () => {
           <div className='relative'>
             <ShoppingCartIcon className='w-7 flex-shrink-0' />
           </div>
-          <p className='text-lg'>$0.00</p>{" "}
-          <span className='text-sm text-gray-500'>(0)</span>
+          <p className='text-lg'>{formattedTotalPrice}</p>{" "}
+          <span className='text-sm text-gray-500'>({cartCount})</span>
         </Link>
       </div>
     </header>
