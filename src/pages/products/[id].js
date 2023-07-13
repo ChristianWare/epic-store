@@ -1,8 +1,20 @@
 import Image from "next/image";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { stripe } from "src/utils/stripe";
-import { formatCurrencyString } from "use-shopping-cart";
+import { formatCurrencyString, useShoppingCart } from "use-shopping-cart";
 
 const ProductPage = ({ product }) => {
+  const [count, setCount] = useState(1);
+  const { addItem } = useShoppingCart();
+
+  function onAddToCart(event) {
+    event.preventDefault();
+    const id = toast.loading(`Adding ${count} item${count > 1 ? "s" : ""}`);
+    addItem(product, { count });
+    toast.success(`${count} ${product.name} added`, { id });
+  }
+
   return (
     <div className='container lg:max-w-screen-lg mx-auto py-12 px-6'>
       <div className='felx flex-col md:flex-row justify-between items-center space-y-8 md:space-x-12'>
@@ -29,16 +41,28 @@ const ProductPage = ({ product }) => {
         <div className='mt-4 border-t pt-4'>
           <p>Quantity:</p>
           <div className='mt-1 flex items-center space-x-3'>
-            <button className='p-1 rounded-md hover:bg-rose-100 hover:text-rose-500 w-6 h-6 text-4xl'>
+            <button
+              disabled={count <= 1}
+              onClick={() => setCount(count - 1)}
+              className='p-1 rounded-md hover:bg-rose-100 hover:text-rose-500 w-6 h-6 text-4xl'
+            >
               -
             </button>
-            <p className='text-2xl'>0</p>
-            <button className='p-1 rounded-md hover:bg-green-100 hover:text-green-500 w-6 h-6 text-4xl'>
+            <p className='text-2xl'>{count}</p>
+            <button
+              onClick={() => setCount(count + 1)}
+              className='p-1 rounded-md hover:bg-green-100 hover:text-green-500 w-6 h-6 text-4xl'
+            >
               +
             </button>
           </div>
         </div>
-        <button className="mt-4 border border-lime-500 px-6 py-2 rounded-md">Add to Cart</button>
+        <button
+          onClick={onAddToCart}
+          className='mt-4 border border-lime-500 px-6 py-2 rounded-md'
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   );
